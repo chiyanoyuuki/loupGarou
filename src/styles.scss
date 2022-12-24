@@ -32,3 +32,26 @@ button:hover{
     text-decoration: underline;
     color:red;
 }
+
+.over:hover{
+    opacity:0.1;
+}
+
+.showOver{
+    z-index:0;
+}
+.showOver:hover{
+    z-index:2;
+}
+
+.clickableDiv:hover{
+    opacity:0.2 !important;
+    cursor:pointer;
+}
+
+.hidden{
+    opacity:0;
+}
+.hidden:hover{
+    opacity:0.1;
+}

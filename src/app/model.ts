@@ -5,7 +5,11 @@ export class Joueur {
     public killed?: boolean;
     public out?: boolean;
     public voyant?: Joueur[];
-    public nb?: number;
+    public nb?: string;
+    public maire?: boolean;
+    public protected?: boolean;
+    public justProtected?: boolean;
+    public alias?: Role;
 }
 
 export class Role {
@@ -19,4 +23,8 @@ export class Role {
     public kill?: boolean;
     public showPlayers?: boolean;
     public end?: number;
+    public use?: number;
+    public used?: boolean;
+    public life?: number;
+    public reste?: Role[];
 }
