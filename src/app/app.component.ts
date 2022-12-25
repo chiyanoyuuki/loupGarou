@@ -15,8 +15,10 @@ export class AppComponent {
   public interval: any;
   public persoClicked?: Joueur;
   public unanimite!: string;
+  public zerotonine = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   public winners?: string;
   public loupPassed = false;
+  public hasChanged = false;
   public select: string[] = [];
   public tour: number = 0;
   //public start: string = "dodo";
@@ -135,14 +137,24 @@ export class AppComponent {
         role: "Choisissez parmis les deux rôles, celui que vous incarnerez désormais",
         nb: 0,
         order: -1,
+      },
+      {
+        showPlayers: true,
+        nom: "Switcheur",
+        image: "switcheur",
+        description: "Vous pouvez échanger votre carte avec celle d'un autre joueur juste avant le levé du jour",
+        role: "Choisissez un joueur avec qui échanger de rôles",
+        nb: 0,
+        order: 20,
       }
     ]
   public tmpJoueurs: Joueur[] =
     [
       { "nom": "Dad" },
       { "nom": "Mum" },
+      { "nom": "Nathalie" },
       { "nom": "Alexandre" },
-      { "nom": "Charline" },
+      { "nom": "Antoine" },
       { "nom": "Arthur" },
       { "nom": "Cesar" }
     ];
@@ -257,7 +269,7 @@ export class AppComponent {
           if (role.reste) {
             for (let i = 0; i < 2; i++) {
               {
-                let tmp = this.roles.filter((r: Role) => !role!.reste!.includes(r) && r.nom != "Innocent" && r.image != "voleur");
+                let tmp = this.roles.filter((r: Role) => !role!.reste!.includes(r) && r.nom != "Innocent" && r.nom != "Switcheur" && r.image != "voleur");
                 let rdm = Math.floor(Math.random() * tmp.length);
                 role.reste[i] = tmp[rdm];
               }
@@ -274,8 +286,7 @@ export class AppComponent {
   }
 
   clickNextJoueur() {
-    if (this.joueurSelected) console.log(this.joueurSelected);
-
+    this.hasChanged = false;
     if (this.clickMend) {
       this.joueurSelected.role = this.clickMend;
       if (this.clickMend.nom == "Voyant") this.joueurSelected.voyant = [];
@@ -360,6 +371,15 @@ export class AppComponent {
     return false;
   }
 
+  showPlayers() {
+    if (this.joueurSelected.role) {
+      if (this.over && (this.joueurSelected.role.nom != "Voyant")) return false;
+      if (this.joueurSelected.role!.showPlayers) return true;
+    }
+
+    return false;
+  }
+
   endNuit() {
     //Fin protection avocat
     this.unanimite = "";
@@ -374,7 +394,7 @@ export class AppComponent {
       }
     }
     this.nuit.pause();
-    let morts = this.joueurs.filter((j: Joueur) => j.killed);
+    let morts = this.joueurs.filter((j: Joueur) => j.killed && !j.out);
     if (morts.length > 0) { this.death.play(); }
     else { this.nodeath.play(); }
     //Tri aleatoire
@@ -394,6 +414,8 @@ export class AppComponent {
       this.select[i] = "";
     }
     this.checkIfSeducteur();
+    this.checkIfWin();
+    if (this.etape == "end") return;
     if (this.tour == 0 && this.president) {
       this.etape = "election";
     }
@@ -538,12 +560,13 @@ export class AppComponent {
       this.goodwin.play();
     }
     else if (joueursRestants.filter((joueur: Joueur) => joueur.role?.nom != "Tueur").length == 0) {
-      this.etape = "end";
       if (joueursRestants.length == 1) {
+        this.etape = "end";
         this.winners = "Bravo au tueur qui gagne la partie en éliminant tous les innocents !";
         this.badwin.play();
       }
       else {
+        this.etape = "end";
         this.winners = "Bravo aux tueurs qui gagnent la partie en éliminant tous les tueurs !";
         this.badwin.play();
       }
@@ -641,9 +664,22 @@ export class AppComponent {
     else if (this.joueurSelected.role?.nom == "Avocat") {
       this.persoClicked = joueur;
     }
+    else if (this.joueurSelected.role?.nom == "Switcheur") {
+      let roleprit = JSON.parse(JSON.stringify(joueur.role));
+      if (joueur.alias) {
+        let aliasprit = JSON.parse(JSON.stringify(joueur.alias));
+        this.joueurSelected.alias = aliasprit;
+        joueur.alias = undefined;
+      }
+      this.hasChanged = true;
+      joueur.role = JSON.parse(JSON.stringify(this.joueurSelected.role));
+      this.joueurSelected.role = roleprit;
+      this.over = true;
+    }
   }
 
-  public joueurBlesse() { return this.joueurs.find((joueur: Joueur) => joueur.killed)?.nom }
+
+  public joueurBlesse() { return this.joueurs.find((joueur: Joueur) => joueur.killed && !joueur.out)?.nom }
 
   startTimer() {
     this.interval = setInterval(() => {
