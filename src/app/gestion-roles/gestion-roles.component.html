@@ -1,0 +1,16 @@
+<div>
+  <p style="margin-bottom: 10px; text-decoration: underline">
+    Rôles restants à choisir : {{ data.cartesRestantes }}
+  </p>
+  <div style="display: flex; flex-wrap: wrap; max-width: 550px">
+    <app-role-to-chose
+      *ngFor="let role of data.roles; let i = index"
+      [role]="role"
+      [data]="data"
+    ></app-role-to-chose>
+  </div>
+  <div class="flex">
+    <button (click)="data.page = 'gestionJoueurs'">Retour</button>
+    <button (click)="clickDodo()">Suivant</button>
+  </div>
+</div>

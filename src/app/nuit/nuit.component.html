@@ -1,0 +1,58 @@
+<div class="flex">
+  <div
+    *ngIf="data.joueurs[data.index].role.showPlayers"
+    style="
+      width: 150px;
+      margin-right: 10px;
+      margin-top: 100px;
+      height: fit-content;
+      border-right: 1px solid white;
+    "
+  >
+    <div
+      *ngFor="let joueur of joueurs; let i = index"
+      style="display: flex; justify-content: left"
+    >
+      <img
+        *ngIf="canSeeRole(joueur)"
+        src="./assets/{{
+          joueur.role.mendiant ? 'voleur' : joueur.role.image
+        }}.jpg"
+        style="width: 25px; height: 25px"
+      />
+      <img
+        *ngIf="!canSeeRole(joueur)"
+        src="./assets/dos.jpg"
+        style="width: 25px; height: 25px"
+      />
+      <p
+        class="clickable"
+        style="text-align: left; white-space: nowrap; padding-top: 3px"
+        (click)="clicked == joueur ? (clicked = undefined) : (clicked = joueur)"
+        [style.color]="getColor(joueur)"
+      >
+        &nbsp;&nbsp;{{ i + 1 + ". " + joueur.nom }}
+      </p>
+    </div>
+  </div>
+
+  <div>
+    <div class="maxHiddenHover">
+      <p>{{ data.joueurs[data.index].nom }}</p>
+    </div>
+    <div *ngIf="data.index > -1" class="flex">
+      <div>
+        <app-carte-joueur
+          [role]="data.joueurs[data.index].role"
+          [data]="data"
+          [type]="'nuit'"
+        ></app-carte-joueur>
+
+        <div class="flex">
+          <button *ngIf="!data.dodo" (click)="clickDodo()">Suivant</button
+          ><button *ngIf="data.dodo" (click)="clickDodo()">zzz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

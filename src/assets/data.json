@@ -1,0 +1,139 @@
+{
+  "nightKills": [],
+  "index": 0,
+  "dodo": false,
+  "cartesRestantes": 2,
+  "page": "gestionRoles",
+  "screenHeight": 0,
+  "screenWidth": 0,
+  "president": true,
+  "skipFade": true,
+  "scale": 1,
+  "joueurs": [
+    {
+      "nom": "Dad"
+    },
+    {
+      "nom": "Mum"
+    },
+    {
+      "nom": "Nathalie"
+    },
+    {
+      "nom": "Alexandre"
+    }
+  ],
+  "roles": [
+    {
+      "showPlayers": true,
+      "nom": "Tueur",
+      "image": "tueur",
+      "description": "Vous pouvez tuer un autre joueur durant la nuit",
+      "descriptionNuit": "Les tueurs se mettent d'accord pour donner le numéro d'un joueur qu'ils attaqueront cette nuit",
+      "count": 0,
+      "order": 3
+    },
+    {
+      "nom": "Innocent",
+      "image": "innocent",
+      "description": "Vous ne jouez pas la nuit, mais participez au vote du village la journée",
+      "count": 0,
+      "order": 999
+    },
+    {
+      "showPlayers": true,
+      "nom": "Docteur",
+      "image": "docteur",
+      "description": "Vous pouvez aider un joueur blessé ou donner un médicament douteux à un autre joueur durant la nuit",
+      "descriptionNuit": "Si vous donnez le numéro d'un joueur blessé (rouge), il sera soigné, sinon (blanc) il mourra. Vous pouvez aussi vous rendormir",
+      "healSkill": true,
+      "killSkill": true,
+      "count": 0,
+      "order": 4
+    },
+    {
+      "showPlayers": true,
+      "nom": "Policier",
+      "image": "policier",
+      "description": "Vous pouvez empêcher quelqu'un de parler pendant la journée",
+      "descriptionNuit": "Donnez le numéro d'un joueur qui ne pourra pas parler durant la journée",
+      "count": 0,
+      "order": 1
+    },
+    {
+      "showPlayers": true,
+      "nom": "Voyant",
+      "image": "voyant",
+      "description": "Vous pouvez regarder la carte d'un autre joueur toutes les nuits",
+      "descriptionNuit": "Donnez le numéro d'un joueur dont vous voulez voir la carte",
+      "count": 0,
+      "order": 2
+    },
+    {
+      "nom": "Kamikaze",
+      "image": "chasseur",
+      "description": "Vous pouvez emporter quelqu'un avec vous avant de mourir",
+      "count": 0,
+      "order": 999
+    },
+    {
+      "showPlayers": true,
+      "nom": "Seducteur",
+      "image": "seducteur",
+      "description": "Vous pouvez lier deux personnes qui devront gagner ensemble ou mourir ensemble",
+      "descriptionNuit": "Donnez le numéro de deux joueurs qui seront liés jusqu'à la fin de la partie",
+      "count": 0,
+      "order": 0,
+      "end": 1
+    },
+    {
+      "nom": "CEO",
+      "image": "hommeaffaire",
+      "description": "Vous pouvez user de votre argent pour accélérer drastiquement un vote",
+      "count": 0,
+      "order": 1.8,
+      "money": 1
+    },
+    {
+      "nom": "Hamster",
+      "image": "hamster",
+      "description": "Vous avez deux vies",
+      "count": 0,
+      "order": 999,
+      "life": 2
+    },
+    {
+      "nom": "Saint",
+      "image": "ange",
+      "description": "Vous êtes protégé tant qu'il y a un policier en vie",
+      "count": 0,
+      "order": 999
+    },
+    {
+      "showPlayers": true,
+      "nom": "Avocat",
+      "image": "avocat",
+      "description": "Vous protegez quelqu'un toutes les nuits",
+      "descriptionNuit": "Donnez le numéro d'un joueur qui sera protégé cette nuit",
+      "count": 0,
+      "order": 1.5
+    },
+    {
+      "nom": "Mendiant",
+      "image": "voleur",
+      "description": "Vous pouvez choisir entre deux rôles tirés aléatoirement au début de la partie",
+      "descriptionNuit": "Choisissez parmis les deux rôles, celui que vous incarnerez désormais",
+      "count": 0,
+      "order": -1
+    },
+    {
+      "showPlayers": true,
+      "nom": "Switcheur",
+      "image": "switcheur",
+      "description": "Vous pouvez échanger votre carte avec celle d'un autre joueur juste avant le levé du jour",
+      "descriptionNuit": "Choisissez un joueur avec qui échanger de rôles",
+      "count": 0,
+      "order": 20
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+<div
+  *ngIf="data.index == -1"
+  style="
+    background-image: url('./assets/nuit.jpg');
+    background-size: cover;
+    width: 200px;
+    height: 120px;
+  "
+>
+  <div class="flex">
+    <button *ngIf="!data.dodo" style="margin-top: 50px" (click)="clickDodo()">
+      Dodo
+    </button>
+  </div>
+</div>
+<div *ngIf="data.index > -1" class="flex">
+  <div>
+    <p>{{ data.joueurs[data.index].nom }}</p>
+    <app-carte-joueur
+      [role]="data.joueurs[data.index].role"
+      [data]="data"
+      [type]="'roles'"
+    ></app-carte-joueur>
+    <div class="flex">
+      <button *ngIf="!data.dodo" (click)="clickDodo()">Suivant</button>
+      <button *ngIf="data.dodo">zzz</button>
+    </div>
+  </div>
+</div>

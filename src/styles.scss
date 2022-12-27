@@ -1,57 +1,84 @@
-html{
-    background-color:#202020;
+html,
+body,
+app-root {
+  height: 100%;
+  display: inherit;
+  overflow: hidden;
+}
+* {
+  margin: 0;
+  position: relative;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+img {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+html {
+  background-color: #202020;
 }
 
-button, input, select{
-    background-color: #303030;
-    border-radius:20px;
-    padding:10px;
-    color:white;
-    font-weight:bold;
-    text-align: center;
+button,
+input,
+select {
+  background-color: #303030;
+  border-radius: 20px;
+  padding: 5px 10px;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  margin: 5px;
 }
 
-p{
-    color:white;
-    font-weight: bold;
-    margin:10px 0px;
-    text-align:center;
+.clickable:hover,
+button:hover,
+select:hover {
+  cursor: pointer;
+  opacity: 0.3;
 }
 
-.linked{
-    background-color:rgb(153, 0, 89);
+.flex {
+  display: flex;
+  justify-content: center;
 }
 
-button:hover{
-    opacity:0.5;
-    cursor:pointer;
+p {
+  color: white;
+  font-weight: bold;
+  text-align: center;
 }
 
-.clickable:hover{
-    cursor:pointer;
-    text-decoration: underline;
-    color:red;
+.vertFlex {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  height: 100%;
+  justify-content: center;
+}
+.hiddenHover p,
+.maxHiddenHover p {
+  color: transparent;
+}
+.hiddenHover:hover {
+  background: #30303090 !important;
+  opacity: 1 !important;
 }
 
-.over:hover{
-    opacity:0.1;
+.maxHiddenHover:hover {
+  opacity: 0.05 !important;
 }
 
-.showOver{
-    z-index:0;
-}
-.showOver:hover{
-    z-index:2;
+.hiddenHover:hover p,
+.maxHiddenHover:hover p {
+  color: white;
 }
 
-.clickableDiv:hover{
-    opacity:0.2 !important;
-    cursor:pointer;
-}
-
-.hidden{
-    opacity:0;
-}
-.hidden:hover{
-    opacity:0.1;
+.disabledButton {
+  opacity: 0.2;
+  pointer-events: none;
 }

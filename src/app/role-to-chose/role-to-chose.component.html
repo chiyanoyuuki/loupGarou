@@ -1,0 +1,40 @@
+<div>
+  <p [style.color]="role.count > 0 ? 'green' : 'white'">{{ role.nom }}</p>
+
+  <div
+    class="hiddenHover"
+    [style.opacity]="role.count > 0 ? '1' : '0.1'"
+    [style.background-image]="'url(./assets/' + role.image + '.jpg)'"
+    style="width: 100px; height: 100px; background-size: contain; padding: 5px"
+  >
+    <p style="font-size: 12px">{{ role.description }}</p>
+  </div>
+
+  <div style="display: flex; justify-content: space-evenly">
+    <button
+      style="width: 34px"
+      [disabled]="role.count == 0"
+      [ngClass]="{
+        disabledButton: role.count == 0
+      }"
+      (click)="click(-1)"
+    >
+      -
+    </button>
+    <p
+      style="padding-top: 12px"
+      [style.opacity]="role.count > 0 ? '1' : '0.1'"
+      [style.color]="role.count > 0 ? 'green' : 'white'"
+    >
+      {{ role.count }}
+    </p>
+    <button
+      style="width: 34px"
+      [disabled]="data.cartesRestantes == 0"
+      [ngClass]="{ disabledButton: data.cartesRestantes == 0 }"
+      (click)="click(1)"
+    >
+      +
+    </button>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+<div>
+  <p style="font-size: 28px">{{ role.nom }}</p>
+  <div class="flex">
+    <img
+      src="./assets/{{ role.image }}.jpg"
+      style="width: 250px; height: 250px"
+    />
+  </div>
+  <p style="max-width: 400px" *ngIf="type == 'roles'">
+    {{ role.description }}
+  </p>
+  <p style="max-width: 400px" *ngIf="type != 'roles' && role.nom != 'Docteur'">
+    {{ role.descriptionNuit }}
+  </p>
+  <div *ngIf="type != 'roles' && role.nom == 'Docteur'">
+    <div *ngIf="isDying() && role.healSkill">
+      <p>Choisissez un joueur en rouge pour le soigner</p>
+      <p>OU</p>
+    </div>
+    <div *ngIf="role.killSkill">
+      <p>Choisissez un joueur en blanc pour le tuer</p>
+      <p>OU</p>
+    </div>
+    <p>Vous pouvez vous rendormir</p>
+  </div>
+</div>

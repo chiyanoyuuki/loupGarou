@@ -1,0 +1,18 @@
+<div>
+  <p style="text-decoration: underline">Liste des joueurs :</p>
+  <div style="margin: 10px 0px">
+    <p
+      (click)="click(joueur)"
+      *ngFor="let joueur of data.joueurs"
+      style="text-align: left"
+      class="clickable"
+    >
+      {{
+        joueurClicked == joueur ? "Supprimer " + joueur.nom + " ?" : joueur.nom
+      }}
+    </p>
+    <input type="text" [(ngModel)]="nomJoueur" *ngIf="add" />
+  </div>
+  <button (click)="clickAdd()">{{ add ? "Valider" : "Ajouter joueur" }}</button>
+  <button (click)="data.page = 'gestionRoles'">Suivant</button>
+</div>

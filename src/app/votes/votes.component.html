@@ -1,0 +1,142 @@
+<div
+  *ngIf="data.index == -1"
+  style="
+    background-image: url('./assets/nuit.jpg');
+    background-size: cover;
+    width: 200px;
+    height: 120px;
+  "
+>
+  <div class="flex">
+    <button *ngIf="!data.dodo" style="margin-top: 50px" (click)="clickDodo()">
+      Dodo
+    </button>
+  </div>
+</div>
+
+<div *ngIf="data.index != -1">
+  <div [style.margin]="data.joueurs.length * 15 + 'px 0px'">
+    <div *ngIf="data.page == 'win'" style="margin-bottom: 25px">
+      <p>Félicitation aux {{ win }} qui gagnent la partie !</p>
+    </div>
+    <div *ngIf="data.page == 'recap'" style="margin-bottom: 25px">
+      <div *ngFor="let joueur of data.nightKills">
+        <p>Le joueur {{ joueur.nom }} est malheureusement mort cette nuit</p>
+      </div>
+      <p *ngIf="data.nightKills.length == 0">
+        Aucun joueur n'est mort cette nuit !
+      </p>
+    </div>
+    <div
+      *ngIf="data.page == 'election' && !endVote"
+      style="margin-bottom: 25px"
+    >
+      <p>
+        Vous devez élire un président dont le vote contera double pendant la
+        partie
+      </p>
+      <p>
+        Un président sera choisi aléatoirement si tous les joueurs ne votent pas
+        dans :
+      </p>
+      <p style="font-size: 30px">{{ timer }} secondes !</p>
+    </div>
+    <div *ngIf="data.page == 'election' && endVote" style="margin-bottom: 25px">
+      <p>Bravo à {{ getPresident().nom }} qui gagne l'éléction !</p>
+      <p>Son vote comptera désormais double !</p>
+    </div>
+    <div *ngIf="data.page == 'vote' && !endVote" style="margin-bottom: 25px">
+      <p>Vous devez voter pour éliminer un joueur</p>
+      <p>
+        Un joueur gentil sera tué aléatoirement si tous les joueurs ne votent
+        pas dans :
+      </p>
+      <p style="font-size: 30px">{{ timer }} secondes !</p>
+    </div>
+    <div *ngIf="data.page == 'vote' && endVote" style="margin-bottom: 25px">
+      <p *ngIf="aleat">
+        Le joueur {{ joueurVoted.nom }} est éliminé au tirage au sort !
+      </p>
+      <p *ngIf="!aleat">Le village a décidé d'éliminer {{ joueurVoted.nom }}</p>
+    </div>
+    <div class="flex">
+      <div
+        *ngFor="let joueur of data.joueurs; let i = index"
+        style="margin-right: 2px"
+        [style.opacity]="joueur.dead ? 0.2 : 1"
+      >
+        <img
+          *ngIf="joueur.president"
+          src="./assets/couronne.png"
+          style="position: absolute; top: -48px; left: 0px; width: 100px"
+        />
+        <p>{{ joueur.nom }}</p>
+        <div>
+          <img
+            *ngIf="joueur.dead || data.page == 'win'"
+            src="./assets/{{ joueur.role.image }}.jpg"
+            style="width: 100px; height: 100px"
+          />
+          <img
+            *ngIf="!joueur.dead && data.page != 'win'"
+            src="./assets/dos.jpg"
+            style="width: 100px; height: 100px"
+          />
+          <img
+            *ngIf="joueur.chuted"
+            src="./assets/chuted.png"
+            style="position: absolute; top: 0px; left: 0px; width: 100px"
+          />
+        </div>
+
+        <p *ngIf="joueur.dead || win">{{ joueur.role.nom }}</p>
+        <p *ngIf="!joueur.dead && !win">&nbsp;</p>
+        <div>
+          <select
+            *ngIf="data.page != 'recap' && !win && !joueur.dead"
+            [(ngModel)]="select[i]"
+            style="width: 100px; margin: 0px"
+            [disabled]="endVote"
+            [ngClass]="{ disabledButton: endVote }"
+          >
+            <option></option>
+            <option *ngFor="let joueur of getJoueursNotDead()">
+              {{ joueur.nom }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="flex" style="margin-top: 25px">
+      <select
+        *ngIf="data.page != 'recap' && !win"
+        [(ngModel)]="superSelect"
+        style="width: 100px; margin: 0px; border: 1px solid red"
+        [disabled]="endVote"
+        [ngClass]="{ disabledButton: endVote }"
+      >
+        <option></option>
+        <option *ngFor="let joueur of getJoueursNotDead()">
+          {{ joueur.nom }}
+        </option>
+      </select>
+      <div class="flex">
+        <button
+          *ngIf="!data.dodo && !win"
+          [disabled]="!canVote() && !endVote && data.page != 'recap'"
+          [ngClass]="{
+            disabledButton: !canVote() && !endVote && data.page != 'recap'
+          }"
+          (click)="endTimer(false)"
+          style="margin: 0px 5px"
+        >
+          {{ endVote || data.page == "recap" ? "Suivant" : "Voter" }}
+        </button>
+        <button *ngIf="data.dodo && !win">zzz</button>
+        <button *ngIf="win" (click)="data.page = 'gestionRoles'">
+          Rejouer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
