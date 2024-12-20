@@ -12,47 +12,34 @@
       <img src="./assets/couronne.png" style="width:25px;height:25px;">
       <p *ngIf="!president" style="position: absolute;font-size: 30px;top: -4px;left:8px;margin:0;color:red;">/</p>
     </div>
+    <div style="display:flex;">
+      <p>Nb cartes voleur : </p>
+      <p class="clickable" (click)="addNbVol(-1)">-</p>
+      <p style="margin:0vh 2vw">{{nbvol}}</p>
+      <p class="clickable" (click)="addNbVol(1)">+</p>
+    </div>
     <div style="display:flex;justify-content:center;"><button (click)="clickStart()" style="width:150px;">Suivant</button></div>
   </div>
 </div>
 
-<div *ngIf="etape=='cartes'" style="display:flex;justify-content:center">
-  <div>
-    <div style="display:flex">
-      <div *ngFor="let x of zerotonine" style="margin-right:5px">
-        <p>{{roles[x].nom}}</p>
+<div *ngIf="etape=='cartes'">
+  <div style="display:flex;flex-flow: wrap;">
+      <div *ngFor="let role of roles" style="margin-right:5px">
+        <p>{{role.nom}}</p>
         <div  style="width:150px;height:150px">
-          <img src="./assets/{{roles[x].image}}.jpg" class="over" style="position: absolute;width:150px;height:150px;z-index:1"/>
-          <p style="position:relative;padding:10px;" class="showOver">{{roles[x].description}}</p>
+          <img src="./assets/{{role.image}}.jpg" class="over" style="position: absolute;width:150px;height:150px;z-index:1"/>
+          <p style="position:relative;padding:10px;" class="showOver">{{role.description}}</p>
         </div>
         <div style="display:flex;justify-content: space-evenly;margin-top:10px;">
-          <button style="width:35%" class="clickableDiv" (click)="addCarte(roles[x],-1)" [disabled]="(roles[x].nb==0||(roles[x].nom=='Tueur'&&roles[x].nb==1))" [style.opacity]="(roles[x].nb==0||(roles[x].nom=='Tueur'&&roles[x].nb==1))?'0.2':'1'">-</button>
-          <p>{{roles[x].nb}}</p>
-          <button style="width:35%" class="clickableDiv" (click)="addCarte(roles[x],1)" [disabled]="totalCards==0" [style.opacity]="totalCards==0?'0.2':'1'">+</button>
-           </div>
-      </div>
-    </div>
-    <div style="display:flex">
-      <div *ngFor="let x of zerotonine" style="margin-right:5px">
-        <div *ngIf="roles[x+10]">
-          <p>{{roles[x+10].nom}}</p>
-          <div  style="width:150px;height:150px">
-            <img src="./assets/{{roles[x+10].image}}.jpg" class="over" style="position: absolute;width:150px;height:150px;z-index:1"/>
-            <p style="position:relative;padding:10px;" class="showOver">{{roles[x+10].description}}</p>
-          </div>
-          <div style="display:flex;justify-content: space-evenly;margin-top:10px;">
-            <button style="width:35%" class="clickableDiv" (click)="addCarte(roles[x+10],-1)" [disabled]="(roles[x+10].nb==0||(roles[x+10].nom=='Tueur'&&roles[x+10].nb==1))" [style.opacity]="(roles[x+10].nb==0||(roles[x+10].nom=='Tueur'&&roles[x+10].nb==1))?'0.2':'1'">-</button>
-            <p>{{roles[x+10].nb}}</p>
-            <button style="width:35%" class="clickableDiv" (click)="addCarte(roles[x+10],1)" [disabled]="totalCards==0" [style.opacity]="totalCards==0?'0.2':'1'">+</button>
-             </div>
+          <button style="width:35%" class="clickableDiv" (click)="addCarte(role,-1)" [disabled]="(role.nb==0||(role.nom=='Tueur'&&role.nb==1))" [style.opacity]="(role.nb==0||(role.nom=='Tueur'&&role.nb==1))?'0.2':'1'">-</button>
+          <p>{{role.nb}}</p>
+          <button style="width:35%" class="clickableDiv" (click)="addCarte(role,1)" [disabled]="totalCards==0" [style.opacity]="totalCards==0?'0.2':'1'">+</button>
         </div>
-        
-      </div>
     </div>
-    <div style="display:flex;justify-content:center;margin-top:10px;">
-      <button (click)="etape='ajoutJoueurs'" style="width:150px;margin-right:10px;">Changer joueurs</button>
-      <button (click)="validCartes()" style="width:150px;">Suivant</button>
-    </div>
+  </div>
+  <div style="display:flex;justify-content:center;margin:auto;margin-top:50px;">
+    <button (click)="etape='ajoutJoueurs'" style="width:150px;margin-right:10px;">Changer joueurs</button>
+    <button (click)="validCartes()" style="width:150px;">Suivant</button>
   </div>
   
 </div>
@@ -100,16 +87,16 @@
       <p *ngIf="hasChanged">Vous êtes désormais</p>
       <p>{{joueurSelected.role.nom=="Tueur"?"Tueurs":(joueurSelected.alias?joueurSelected.alias.nom:joueurSelected.role.nom)}} {{joueurSelected.role.nom=="Tueur"?"":joueurSelected.nb}}</p>
       <p class="hidden">{{joueurSelected.nom}}</p>
-      <div style="display:flex;justify-content:center;">
-        <div *ngIf="joueurSelected.role.image=='voleur'" [style.opacity]="!clickMend||joueurSelected.role.reste![0]==clickMend?1:0.1">
-          <p>{{joueurSelected.role.reste![0].nom}}</p>
-          <img (click)="clickMendiant(0)" class="clickableDiv" src="./assets/{{joueurSelected.role.reste![0].image}}.jpg" style="width:300px;height:300px;"/>
-        </div>
-        <img [style.opacity]="joueurSelected.role.image=='voleur'?0.2:1" src="./assets/{{joueurSelected.role.image}}.jpg" style="width:300px;height:300px;"/>
-        <div *ngIf="joueurSelected.role.image=='voleur'" [style.opacity]="!clickMend||joueurSelected.role.reste![1]==clickMend?1:0.1">
-          <p>{{joueurSelected.role.reste![1].nom}}</p>
-          <img (click)="clickMendiant(1)" class="clickableDiv" src="./assets/{{joueurSelected.role.reste![1].image}}.jpg" style="width:300px;height:300px;"/>
-        </div> 
+      <div style="display:flex;justify-content:center;flex-flow: wrap;">
+
+        <ng-template [ngIf]="joueurSelected.role.image=='voleur'">
+          <div *ngFor="let role of joueurSelected.role.reste;let i=index" [style.opacity]="!clickMend||role==clickMend?1:0.1">
+            <p>{{role.nom}}</p>
+            <img (click)="clickMend=role" class="clickableDiv" src="./assets/{{role.image}}.jpg" style="width:300px;height:300px;"/>
+          </div>
+        </ng-template>
+        <img *ngIf="joueurSelected.role.image!='voleur'" src="./assets/{{joueurSelected.role.image}}.jpg" style="width:300px;height:300px;"/>
+        
       </div>
       <p *ngIf="!over">{{joueurSelected.role.role}}</p>
       <p *ngIf="joueurSelected.role.heal&&!over">1 - Le joueur {{joueurBlesse()}} est mal en point, voulez pouvez le soigner</p>
@@ -141,7 +128,7 @@
       <p *ngIf="(joueur.killed||etape=='end')&&joueur.alias">{{joueur.alias.nom}}</p>
       <p *ngIf="joueur.killed||etape=='end'">{{joueur.role?.nom}}</p>
       <div>
-        <select [(ngModel)]="select[i]" style="width:100px" *ngIf="!voteEnded&&!joueur.killed&&etape!='end'">
+        <select [(ngModel)]="joueur.select" style="width:100px" *ngIf="!voteEnded&&!joueur.killed&&etape!='end'">
           <ng-container *ngFor="let j of joueurs">
             <option *ngIf="(j!=joueur||etape=='election')&&!j.killed">{{j.nom}}</option>
           </ng-container>
@@ -151,6 +138,7 @@
   </div>
   <div style="display:flex;justify-content:center;">
     <select *ngIf="(etape=='vote'||etape=='election')&&!voteEnded" [(ngModel)]="unanimite" style="max-width:100px;margin-top: 5px;border-color: red;margin-right: 5px;">
+      <option></option>
       <ng-container *ngFor="let j of joueurs">
         <option *ngIf="!j.killed">{{j.nom}}</option>
       </ng-container>

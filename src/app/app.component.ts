@@ -146,17 +146,28 @@ export class AppComponent {
         role: "Choisissez un joueur avec qui échanger de rôles",
         nb: 0,
         order: 20,
+      },
+      {
+        showPlayers: true,
+        nom: "Relou",
+        image: "relou",
+        description: "Vous pouvez voler un vote lors de la journée",
+        role: "Choisissez un joueur à qui voler le vote de la journée",
+        nb: 0,
+        order:2.1
       }
     ]
+  
+  public nbvol = 3;
   public tmpJoueurs: Joueur[] =
     [
       { "nom": "Dad" },
       { "nom": "Mum" },
-      { "nom": "Nathalie" },
       { "nom": "Alexandre" },
       { "nom": "Antoine" },
       { "nom": "Arthur" },
-      { "nom": "Cesar" }
+     /* { "nom": "Cesar" },
+      { "nom": "Charles" },*/
     ];
   public changedName: string = "";
   public changingName = false;
@@ -201,7 +212,7 @@ export class AppComponent {
     this.joueurSelected = joueur;
   }
 
-  addCarte(role: Role, nb: number) {
+  public addCarte(role: Role, nb: number) {
     role.nb += nb;
     this.totalCards += nb * -1;
   }
@@ -227,6 +238,7 @@ export class AppComponent {
   }
 
   public validCartes() {
+    console.log(this.joueurs);
     for (let i = 0; i < this.roles.length; i++) {
       let role = this.roles[i];
       let nb = role.nb;
@@ -267,9 +279,9 @@ export class AppComponent {
         if (role) {
           role.reste = [];
           if (role.reste) {
-            for (let i = 0; i < 2; i++) {
+            for (let i = 0; i < this.nbvol; i++) {
               {
-                let tmp = this.roles.filter((r: Role) => !role!.reste!.includes(r) && r.nom != "Innocent" && r.nom != "Switcheur" && r.image != "voleur");
+                let tmp = this.getVolRoles(role.reste);
                 let rdm = Math.floor(Math.random() * tmp.length);
                 role.reste[i] = tmp[rdm];
               }
@@ -285,7 +297,29 @@ export class AppComponent {
     this.nuit.play();
   }
 
+  public getVolRoles(reste:Role[])
+  {
+    let roles = [];
+    console.log(reste);
+    console.log(this.roles);
+    let alreadySeduc = this.joueurs.find((j:any)=>j.role.nom=="Seducteur")!=undefined;
+    roles = this.roles.filter((r: Role) => reste.find((rest:any)=>rest.nom==r.nom)==undefined && r.nom != "Innocent" && r.nom != "Switcheur" && r.image != "voleur" && (alreadySeduc?r.nom!="Seducteur":true));
+    return roles;
+  }
+
+  public addNbVol(i:number)
+  {
+    if(i==-1&&this.nbvol>2)this.nbvol--;
+    else if(i==1)
+    {
+      let nb= this.tmpRoles.filter((r: Role) => r.nom != "Innocent" && r.nom != "Switcheur" && r.image != "voleur").length;
+      if(this.nbvol<nb)this.nbvol++;
+    }
+  }
+
   clickNextJoueur() {
+    console.log("selected",this.joueurSelected);
+
     this.hasChanged = false;
     if (this.clickMend) {
       this.joueurSelected.role = this.clickMend;
@@ -305,6 +339,16 @@ export class AppComponent {
         this.persoClicked = undefined;
       }
     }
+    else if (this.joueurSelected.role!.nom == "Relou") {
+      if (this.persoClicked) {
+        if(!this.persoClicked.vote)this.persoClicked.vote = 0;
+        if(!this.joueurSelected.vote)this.joueurSelected.vote = 0;
+
+        this.persoClicked.vote = this.persoClicked.vote-1;
+        this.joueurSelected.vote = this.joueurSelected.vote+1;
+        this.persoClicked = undefined;
+      }
+    }
     if (this.idx >= this.joueurs.length) { this.endNuit(); return; }
     this.joueurSelected = this.joueurs[this.idx];
     if (this.joueurSelected.role?.order == 999) { this.endNuit(); return; }
@@ -313,6 +357,7 @@ export class AppComponent {
     this.over = false;
     let role = this.joueurSelected.role;
     if (role) {
+      if(this.joueurSelected.defkilled){ this.clickNextJoueur(); return; }
       if (role.nom == "CEO" && role.use == 0) { this.clickNextJoueur(); return; }
       if (this.joueurSelected.killed && role.nom != "Docteur") { this.clickNextJoueur(); return; }
       if (role.end) { if (role.end <= this.tour) { this.clickNextJoueur(); return; } }
@@ -333,10 +378,6 @@ export class AppComponent {
       if (joueur.role?.nom == "CEO" && !joueur.killed && joueur.role?.use && joueur.role?.use > 0) retour = true;
     }
     return retour;
-  }
-
-  clickMendiant(i: number) {
-    this.clickMend = this.joueurSelected.role!.reste![i];
   }
 
   showPlayer(joueurToShow: Joueur) {
@@ -411,7 +452,7 @@ export class AppComponent {
     this.startTimer();
     this.voteEnded = false;
     for (let i = 0; i < this.joueurs.length; i++) {
-      this.select[i] = "";
+      this.joueurs[i].select = "";
     }
     this.checkIfSeducteur();
     this.checkIfWin();
@@ -500,14 +541,14 @@ export class AppComponent {
         let tmp: { joueur: Joueur, qte: number }[] = [];
         for (let i = 0; i < this.joueurs.length; i++) {
           let joueur = this.joueurs[i];
-          tmp[i] = { joueur: joueur, qte: this.select.filter((sel: string) => sel == joueur.nom).length };
+          tmp[i] = { joueur: joueur, qte: this.joueurs.filter((j:any)=>j.select==joueur.nom).length };
         }
         tmp.sort((a, b) => (a.qte > b.qte ? -1 : 1));
         let tabtmp = tmp.filter((a: { joueur: Joueur, qte: number }) => a.qte == tmp[0].qte);
         let rdm = Math.floor(Math.random() * tabtmp.length);
         tmp[rdm].joueur.maire = true;
       }
-      this.select = [];
+      this.joueurs.forEach((j:any)=>j.select="");
       this.timer = 180;
       this.unanimite = "";
       let jo = this.joueurs.find((jo: Joueur) => jo.role?.used);
@@ -522,20 +563,45 @@ export class AppComponent {
         if (tmp) j = tmp;
       }
       else {
+        console.log(this.joueurs);
         let tmp: { joueur: Joueur, qte: number }[] = [];
-        for (let i = 0; i < this.joueurs.length; i++) {
-          let joueur = this.joueurs[i];
-          if (joueur.maire) this.select.push(this.select[i]);
-          if (joueur.maire) console.log(this.select[i]);
+        let voteds = this.joueurs.filter((j:any)=>!j.killed);
+
+        for (let i = 0; i < voteds.length; i++) {
+          let voted = voteds[i];
+          let qte = 0;
+          
+          for(let x=0;x<this.joueurs.length;x++)
+          {
+            let votant = this.joueurs[x];
+            if(votant.select==voted.nom)
+            {
+              if(votant.vote)
+              {
+                qte+=votant.vote<1?0:votant.vote;
+              }
+              else
+              {
+                qte+=1;
+              }
+            }
+          }
+          tmp[i] = { joueur: voted, qte: qte };
         }
         for (let i = 0; i < this.joueurs.length; i++) {
           let joueur = this.joueurs[i];
-          tmp[i] = { joueur: joueur, qte: this.select.filter((sel: string) => sel == joueur.nom).length };
+          if (joueur.maire){
+            let vote = joueur.select;
+            let j = tmp.find((j:any)=>j.joueur.nom==vote);
+            if(j)j.qte++;
+          }
         }
-        tmp.sort((a, b) => (a.qte > b.qte ? -1 : 1));
+        console.log(tmp);
+        tmp = tmp.sort((a, b) => (a.qte > b.qte ? -1 : 1));
         let tabtmp = tmp.filter((a: { joueur: Joueur, qte: number }) => a.qte == tmp[0].qte);
+        console.log(tabtmp);
         let rdm = Math.floor(Math.random() * tabtmp.length);
-        j = tmp[rdm].joueur;
+        j = tabtmp[rdm].joueur;
       }
 
       this.kill(j);
@@ -550,6 +616,17 @@ export class AppComponent {
       clearInterval(this.interval);
       this.checkIfWin();
     }
+
+    this.joueurs.filter((j:any)=>j.killed&&!j.defkilled).forEach((j:any)=>j.defkilled=true);
+  }
+
+  showVotant(tab:any)
+  {
+    tab.forEach((t:any)=>console.log(t.nom+" "+t.vote+" "+t.select));
+  }
+  showQte(tab:any)
+  {
+    tab.forEach((t:any)=>console.log(t.nom+" "+t.qte));
   }
 
   checkIfWin() {
@@ -586,11 +663,12 @@ export class AppComponent {
   }
 
   countSelect() {
+    if (this.unanimite && this.unanimite != "") return 0;
     let tmp = 0;
     for (let i = 0; i < this.joueurs.length; i++) {
-      if ((!this.select[i] || this.select[i] == "") && !this.joueurs[i].killed) tmp++
+      let joueur = this.joueurs[i];
+      if ((!joueur.select|| joueur.select == "") && !this.joueurs[i].killed) tmp++
     }
-    if (this.unanimite && this.unanimite != "") return 0;
     return tmp;
   }
 
@@ -604,6 +682,7 @@ export class AppComponent {
     });
     this.idx = 0;
     this.persoClicked = undefined;
+    this.joueurs.forEach((j:any)=>j.vote=1);
     this.over = false;
     this.loupPassed = false;
     this.etape = "nuit";
@@ -676,6 +755,10 @@ export class AppComponent {
       this.joueurSelected.role = roleprit;
       this.over = true;
     }
+    else if(this.joueurSelected.role?.nom == "Relou") {
+      this.persoClicked = joueur;
+      this.over = true;
+    }
   }
 
 
@@ -691,7 +774,7 @@ export class AppComponent {
           let rdm = Math.floor(Math.random() * joueursNotDead.length);
           let joueur = joueursNotDead[rdm];
           joueur.maire = true;
-          this.select = [];
+          this.joueurs.forEach((j:any)=>j.select="");
           this.timer = 180;
           let jo = this.joueurs.find((jo: Joueur) => jo.role?.used);
           if (jo) { this.timer = 40; jo.role!.used = false; }
@@ -714,6 +797,7 @@ export class AppComponent {
   }
 
   kill(joueur: Joueur) {
+    console.log("Kill : "+joueur.nom);
     if (joueur.role && joueur.role.life == 2 && !joueur.protected) joueur.role.life--;
     else if (joueur.role?.nom == "Saint" && this.isAlive("Policier")) return;
     else if (joueur.protected) return;

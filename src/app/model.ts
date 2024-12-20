@@ -10,6 +10,9 @@ export class Joueur {
     public protected?: boolean;
     public justProtected?: boolean;
     public alias?: Role;
+    public vote?: number;
+    public select?: string;
+    public defkilled?: boolean;
 }
 
 export class Role {
@@ -27,4 +30,5 @@ export class Role {
     public used?: boolean;
     public life?: number;
     public reste?: Role[];
+    public vote?: number;
 }
