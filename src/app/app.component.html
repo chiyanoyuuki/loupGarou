@@ -1,158 +1,429 @@
-<div *ngIf="etape=='ajoutJoueurs'" style="display:flex; justify-content: center;">
+<div
+  *ngIf="etape == 'ajoutJoueurs'"
+  style="display: flex; justify-content: center"
+>
   <div>
-    <div style="display:flex; justify-content: center;" *ngIf="add">
-      <input type="string" [(ngModel)]="nomjoueur"/>
-      <button (click)="addPlayer()" style="margin-left:10px;">Valider</button>
+    <div style="display: flex; justify-content: center" *ngIf="add">
+      <input type="string" [(ngModel)]="nomjoueur" />
+      <button (click)="addPlayer()" style="margin-left: 10px">Valider</button>
     </div>
-    <div style="display:flex;justify-content:center;"><button *ngIf="!add" (click)="add = true" style="width:150px;">Ajouter joueur</button></div>
-    <div style="display:flex;margin:10px 0px">
-      <p class="clickable" *ngFor="let joueur of tmpJoueurs" (click)="clickJoueur(joueur)" style="margin-right:10px;">{{joueurSelected==joueur?'Supprimer ?':joueur.nom}}</p>
+    <div style="display: flex; justify-content: center">
+      <button *ngIf="!add" (click)="add = true" style="width: 150px">
+        Ajouter joueur
+      </button>
     </div>
-    <div class="clickable" style="display:flex;margin:10px 0px;position:relative" (click)="president=!president">
-      <img src="./assets/couronne.png" style="width:25px;height:25px;">
-      <p *ngIf="!president" style="position: absolute;font-size: 30px;top: -4px;left:8px;margin:0;color:red;">/</p>
+    <div style="display: flex; margin: 10px 0px">
+      <p
+        class="clickable"
+        *ngFor="let joueur of tmpJoueurs"
+        (click)="clickJoueur(joueur)"
+        style="margin-right: 10px"
+      >
+        {{ joueurSelected == joueur ? "Supprimer ?" : joueur.nom }}
+      </p>
     </div>
-    <div style="display:flex;">
-      <p>Nb cartes voleur : </p>
-      <p class="clickable" (click)="addNbVol(-1)">-</p>
-      <p style="margin:0vh 2vw">{{nbvol}}</p>
+    <div
+      class="clickable"
+      style="display: flex; margin: 10px 0px; position: relative"
+      (click)="president = !president"
+    >
+      <img src="./assets/couronne.png" style="width: 25px; height: 25px" />
+      <p
+        *ngIf="!president"
+        style="
+          position: absolute;
+          font-size: 30px;
+          top: -4px;
+          left: 8px;
+          margin: 0;
+          color: red;
+        "
+      >
+        /
+      </p>
+    </div>
+    <div style="display: flex">
+      <p>Nb cartes voleur :</p>
+      <p class="clickable" (click)="addNbVol(-1)" style="margin-left: 10px">
+        -
+      </p>
+      <p style="margin: 10px 2vw 0vh 2vw">{{ nbvol }}</p>
       <p class="clickable" (click)="addNbVol(1)">+</p>
     </div>
-    <div style="display:flex;justify-content:center;"><button (click)="clickStart()" style="width:150px;">Suivant</button></div>
-  </div>
-</div>
-
-<div *ngIf="etape=='cartes'">
-  <div style="display:flex;flex-flow: wrap;">
-      <div *ngFor="let role of roles" style="margin-right:5px">
-        <p>{{role.nom}}</p>
-        <div  style="width:150px;height:150px">
-          <img src="./assets/{{role.image}}.jpg" class="over" style="position: absolute;width:150px;height:150px;z-index:1"/>
-          <p style="position:relative;padding:10px;" class="showOver">{{role.description}}</p>
-        </div>
-        <div style="display:flex;justify-content: space-evenly;margin-top:10px;">
-          <button style="width:35%" class="clickableDiv" (click)="addCarte(role,-1)" [disabled]="(role.nb==0||(role.nom=='Tueur'&&role.nb==1))" [style.opacity]="(role.nb==0||(role.nom=='Tueur'&&role.nb==1))?'0.2':'1'">-</button>
-          <p>{{role.nb}}</p>
-          <button style="width:35%" class="clickableDiv" (click)="addCarte(role,1)" [disabled]="totalCards==0" [style.opacity]="totalCards==0?'0.2':'1'">+</button>
-        </div>
+    <div style="display: flex; justify-content: center">
+      <button (click)="clickStart()" style="width: 150px">Suivant</button>
     </div>
   </div>
-  <div style="display:flex;justify-content:center;margin:auto;margin-top:50px;">
-    <button (click)="etape='ajoutJoueurs'" style="width:150px;margin-right:10px;">Changer joueurs</button>
-    <button (click)="validCartes()" style="width:150px;">Suivant</button>
-  </div>
-  
 </div>
 
-<div *ngIf="etape=='checkRoles'" style="display:flex;justify-content: center;">
-  <div *ngIf="joueurSelected.role" >
-    <p *ngIf="!changingName" (click)="changeName()" class="clickable">{{joueurSelected.nom}}</p>
-    <div *ngIf="changingName" style="display:flex;justify-content:center">
-      <input type="string" [(ngModel)]="changedName"/>
+<div *ngIf="etape == 'cartes'">
+  <div style="display: flex; flex-flow: wrap">
+    <div *ngFor="let role of roles" style="margin-right: 5px">
+      <p>{{ role.nom }}</p>
+      <div style="width: 150px; height: 150px">
+        <img
+          src="./assets/{{ role.image }}.jpg"
+          class="over"
+          style="position: absolute; width: 150px; height: 150px; z-index: 1"
+        />
+        <p style="position: relative; padding: 10px" class="showOver">
+          {{ role.description }}
+        </p>
+      </div>
+      <div
+        style="display: flex; justify-content: space-evenly; margin-top: 10px"
+      >
+        <button
+          style="width: 35%"
+          class="clickableDiv"
+          (click)="addCarte(role, -1)"
+          [disabled]="role.nb == 0 || (role.nom == 'Tueur' && role.nb == 1)"
+          [style.opacity]="
+            role.nb == 0 || (role.nom == 'Tueur' && role.nb == 1) ? '0.2' : '1'
+          "
+        >
+          -
+        </button>
+        <p>{{ role.nb }}</p>
+        <button
+          style="width: 35%"
+          class="clickableDiv"
+          (click)="addCarte(role, 1)"
+          [disabled]="totalCards == 0"
+          [style.opacity]="totalCards == 0 ? '0.2' : '1'"
+        >
+          +
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    style="
+      display: flex;
+      justify-content: center;
+      margin: auto;
+      margin-top: 50px;
+    "
+  >
+    <button
+      (click)="etape = 'ajoutJoueurs'"
+      style="width: 150px; margin-right: 10px"
+    >
+      Changer joueurs
+    </button>
+    <button (click)="validCartes()" style="width: 150px">Suivant</button>
+  </div>
+</div>
+
+<div
+  *ngIf="etape == 'checkRoles'"
+  style="display: flex; justify-content: center"
+>
+  <div *ngIf="joueurSelected.role">
+    <p *ngIf="!changingName" (click)="changeName()" class="clickable">
+      {{ joueurSelected.nom }}
+    </p>
+    <div *ngIf="changingName" style="display: flex; justify-content: center">
+      <input type="string" [(ngModel)]="changedName" />
       <button (click)="changeName()">Valider</button>
     </div>
     <p>Vous êtes</p>
-    <p style="font-size:40px;">{{joueurSelected.role.nom}} {{joueurSelected.nb}}</p>
-    <div style="display:flex;justify-content:center;"><img src="./assets/{{joueurSelected.role.image}}.jpg" style="width:300px;height:300px;"/></div>
-    <p>{{joueurSelected.role.description}}</p>
-    <div style="display:flex;justify-content:center;"><button (click)="clickNextRole()" style="width:150px">Suivant</button></div>
-  </div>
-</div>
-
-<div *ngIf="etape=='dodo'">
-  <div style="display:flex;justify-content:center"><img src="./assets/nuit.jpg" style="height:100%;position:absolute;top:0;border:5px solid black"></div>
-  
-  <div style="display:flex;justify-content:center">
-    <div style="z-index:1;position:relative;background-color:gray;margin-top:10%;border-radius:100%;width:200px;height:200px;opacity:0.8;border:5px solid black">
-      <p style="margin-top:20%">DODO !</p>
-      <div style="display:flex;justify-content:center;"><button (click)="tour==0?etape='checkRoles':startNuit()">Suivant</button></div>
+    <p style="font-size: 40px">
+      {{ joueurSelected.role.nom }} {{ joueurSelected.nb }}
+    </p>
+    <div style="display: flex; justify-content: center">
+      <img
+        src="./assets/{{ joueurSelected.role.image }}.jpg"
+        style="width: 300px; height: 300px"
+      />
+    </div>
+    <p>{{ joueurSelected.role.description }}</p>
+    <div style="display: flex; justify-content: center">
+      <button (click)="clickNextRole()" style="width: 150px">Suivant</button>
     </div>
   </div>
 </div>
 
-<div *ngIf="etape=='nuit'" style="display:flex;justify-content: center;">
-  <div style="display:flex">
-    <div *ngIf="showPlayers()" style="margin-right:10px;">
-      <div *ngFor="let joueur of joueurs;let i=index" style="margin-bottom:5px;">
-        <div *ngIf="showPlayer(joueur)" style="display:flex">
-          <p class="clickable" (click)="clickPlayer(joueur)" style="width:150px;" [style.color]="showRed(joueur)?'red':'white'">{{i}}. {{joueur.nom}}</p>
-          <img *ngIf="!joueurSelected.voyant?.includes(joueur)" src="./assets/dos.jpg" style="width:50px;height:50px;"/>
-          <img *ngIf="joueurSelected.voyant?.includes(joueur)" src="./assets/{{joueur.role?.image}}.jpg" style="width:50px;height:50px;"/>
-          <p *ngIf="joueurSelected.voyant?.includes(joueur)" style="margin-left:5px;">{{joueur.role?.nom}}</p>
+<div *ngIf="etape == 'dodo'">
+  <div style="display: flex; justify-content: center">
+    <img
+      src="./assets/nuit.jpg"
+      style="height: 100%; position: absolute; top: 0; border: 5px solid black"
+    />
+  </div>
+
+  <div style="display: flex; justify-content: center">
+    <div
+      style="
+        z-index: 1;
+        position: relative;
+        background-color: gray;
+        margin-top: 10%;
+        border-radius: 100%;
+        width: 200px;
+        height: 200px;
+        opacity: 0.8;
+        border: 5px solid black;
+      "
+    >
+      <p style="margin-top: 20%">DODO !</p>
+      <div style="display: flex; justify-content: center">
+        <button (click)="tour == 0 ? (etape = 'checkRoles') : startNuit()">
+          Suivant
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="etape == 'nuit'" style="display: flex; justify-content: center">
+  <div style="display: flex">
+    <div *ngIf="showPlayers()" style="margin-right: 10px">
+      <div
+        *ngFor="let joueur of joueurs; let i = index"
+        style="margin-bottom: 5px"
+      >
+        <div *ngIf="showPlayer(joueur)" style="display: flex">
+          <p
+            class="clickable"
+            (click)="clickPlayer(joueur)"
+            style="width: 150px"
+            [style.color]="showRed(joueur) ? 'red' : 'white'"
+          >
+            {{ i }}. {{ joueur.nom }}
+          </p>
+          <img
+            *ngIf="!joueurSelected.voyant?.includes(joueur)"
+            src="./assets/dos.jpg"
+            style="width: 50px; height: 50px"
+          />
+          <img
+            *ngIf="joueurSelected.voyant?.includes(joueur)"
+            src="./assets/{{ joueur.role?.image }}.jpg"
+            style="width: 50px; height: 50px"
+          />
+          <p
+            *ngIf="joueurSelected.voyant?.includes(joueur)"
+            style="margin-left: 5px"
+          >
+            {{ joueur.role?.nom }}
+          </p>
         </div>
       </div>
     </div>
 
-    <div *ngIf="joueurSelected.role" >
+    <div *ngIf="joueurSelected.role">
       <p *ngIf="hasChanged">Vous êtes désormais</p>
-      <p>{{joueurSelected.role.nom=="Tueur"?"Tueurs":(joueurSelected.alias?joueurSelected.alias.nom:joueurSelected.role.nom)}} {{joueurSelected.role.nom=="Tueur"?"":joueurSelected.nb}}</p>
-      <p class="hidden">{{joueurSelected.nom}}</p>
-      <div style="display:flex;justify-content:center;flex-flow: wrap;">
-
-        <ng-template [ngIf]="joueurSelected.role.image=='voleur'">
-          <div *ngFor="let role of joueurSelected.role.reste;let i=index" [style.opacity]="!clickMend||role==clickMend?1:0.1">
-            <p>{{role.nom}}</p>
-            <img (click)="clickMend=role" class="clickableDiv" src="./assets/{{role.image}}.jpg" style="width:300px;height:300px;"/>
+      <p>
+        {{
+          joueurSelected.role.nom == "Tueur"
+            ? "Tueurs"
+            : joueurSelected.alias
+            ? joueurSelected.alias.nom
+            : joueurSelected.role.nom
+        }}
+        {{ joueurSelected.role.nom == "Tueur" ? "" : joueurSelected.nb }}
+      </p>
+      <p class="hidden">{{ joueurSelected.nom }}</p>
+      <div style="display: flex; justify-content: center; flex-flow: wrap">
+        <ng-template [ngIf]="joueurSelected.role.image == 'voleur'">
+          <div
+            *ngFor="let role of joueurSelected.role.reste; let i = index"
+            [style.opacity]="!clickMend || role == clickMend ? 1 : 0.1"
+          >
+            <ng-template [ngIf]="nodouble(role)">
+              <p>{{ role.nom }}</p>
+              <img
+                (click)="clickMend = role"
+                class="clickableDiv"
+                src="./assets/{{ role.image }}.jpg"
+                style="width: 300px; height: 300px"
+              />
+            </ng-template>
           </div>
         </ng-template>
-        <img *ngIf="joueurSelected.role.image!='voleur'" src="./assets/{{joueurSelected.role.image}}.jpg" style="width:300px;height:300px;"/>
-        
+        <img
+          *ngIf="joueurSelected.role.image != 'voleur'"
+          src="./assets/{{ joueurSelected.role.image }}.jpg"
+          style="width: 300px; height: 300px"
+        />
       </div>
-      <p *ngIf="!over">{{joueurSelected.role.role}}</p>
-      <p *ngIf="joueurSelected.role.heal&&!over">1 - Le joueur {{joueurBlesse()}} est mal en point, voulez pouvez le soigner</p>
-      <p *ngIf="joueurSelected.role.kill&&!over">2 - Vous pouvez donner un médicament douteux à un autre joueur</p>
-      <button *ngIf="joueurSelected.role.nom=='CEO'&&joueurSelected.role.use==1&&!over" (click)="joueurSelected.role.use=0;joueurSelected.role.used=true">Payer pour accélerer le vote de la journée</button>
-      <p *ngIf="joueurSelected.role.nom=='CEO'&&joueurSelected.role.used&&!over">Le vote sera accéléré</p>
-      <div style="display:flex;justify-content:center;"><button *ngIf="(joueurSelected.role.image=='voleur'&&clickMend)||joueurSelected.role.image!='voleur'" (click)="clickNextJoueur()" style="margin-top:5px;width:150px">Suivant</button></div>
+      <p *ngIf="!over">{{ joueurSelected.role.role }}</p>
+      <p *ngIf="joueurSelected.role.heal && !over">
+        1 - Le joueur {{ joueurBlesse() }} est mal en point, voulez pouvez le
+        soigner
+      </p>
+      <p *ngIf="joueurSelected.role.kill && !over">
+        2 - Vous pouvez donner un médicament douteux à un autre joueur
+      </p>
+      <button
+        *ngIf="
+          joueurSelected.role.nom == 'CEO' &&
+          joueurSelected.role.use == 1 &&
+          !over
+        "
+        (click)="joueurSelected.role.use = 0; joueurSelected.role.used = true"
+      >
+        Payer pour accélerer le vote de la journée
+      </button>
+      <p
+        *ngIf="
+          joueurSelected.role.nom == 'CEO' && joueurSelected.role.used && !over
+        "
+      >
+        Le vote sera accéléré
+      </p>
+      <div style="display: flex; justify-content: center">
+        <button
+          *ngIf="
+            (joueurSelected.role.image == 'voleur' && clickMend) ||
+            joueurSelected.role.image != 'voleur'
+          "
+          (click)="clickNextJoueur()"
+          style="margin-top: 5px; width: 150px"
+        >
+          Suivant
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
-<div *ngIf="etape=='vote' || etape=='election' || etape=='kamikaze' || etape=='end' || etape=='newMaire'">
-  <p *ngIf="etape=='newMaire'">Le président est sur le point de rendre l'âme, il doit choisir un joueur pour lui succéder</p>
-  <p *ngIf="etape=='election'&&!voteEnded">Vous devez élire un président</p>
-  <p *ngIf="etape=='election'&&!voteEnded">Attention, le président sera choisi aléatoirement si le village ne se décide pas dans :</p>
-  <p *ngIf="etape=='kamikaze'">Le kamikaze est sur le point de mourir, il peut emporter quelqu'un avec lui !</p>
-  <p *ngIf="etape=='end'" style="font-size: 40px;">Victoire !</p>
-  <p *ngIf="etape=='end'" style="font-size: 20px;">{{winners}}</p>
+<div
+  *ngIf="
+    etape == 'vote' ||
+    etape == 'election' ||
+    etape == 'kamikaze' ||
+    etape == 'end' ||
+    etape == 'newMaire'
+  "
+>
+  <p *ngIf="etape == 'newMaire'">
+    Le président est sur le point de rendre l'âme, il doit choisir un joueur
+    pour lui succéder
+  </p>
+  <p *ngIf="etape == 'election' && !voteEnded">Vous devez élire un président</p>
+  <p *ngIf="etape == 'election' && !voteEnded">
+    Attention, le président sera choisi aléatoirement si le village ne se décide
+    pas dans :
+  </p>
+  <p *ngIf="etape == 'kamikaze'">
+    Le kamikaze est sur le point de mourir, il peut emporter quelqu'un avec lui
+    !
+  </p>
+  <p *ngIf="etape == 'end'" style="font-size: 40px">Victoire !</p>
+  <p *ngIf="etape == 'end'" style="font-size: 20px">{{ winners }}</p>
   <p *ngIf="voteEnded">Le vote est terminé !</p>
-  <p *ngIf="etape=='vote'&&tour==0&&!voteEnded&&president">L'election vient juste de se terminer, mais vous devez déjà voter pour éliminer un joueur de la partie</p>
-  <p *ngIf="etape=='vote'&&!voteEnded">Attention, un joueur aléatoire sera éxecuté si le village ne se décide pas dans :</p>
-  <p *ngIf="(etape=='vote'||etape=='election')&&!voteEnded" style="font-size: 40px;">{{timer}} secondes !</p>
-  <div style="display:flex;justify-content: center;">
-    <div *ngFor="let joueur of joueurs;let i=index" (click)="clickJoueurEnd(joueur)" [ngClass]="{clickableDiv:(etape=='kamikaze'||etape=='newMaire')&&!joueur.killed}" [ngClass]="{linked:joueur.killed&&joueur.linkedTo}" [style.opacity]="joueur.killed?'0.3':'1'" style="position:relative;margin-right:5px;">
-      <p>{{joueur.nom}}</p>
-      <img *ngIf="joueur.maire" src="./assets/couronne.png" style="width:100px;height:100px;position:absolute;  top: -36px; z-index: -1;"/>
-      <img *ngIf="!joueur.killed&&etape!='end'" src="./assets/dos.jpg" style="width:100px;height:100px"/>
-      <img *ngIf="joueur.killed||etape=='end'" src="./assets/{{joueur.role?.image}}.jpg" style="width:100px;height:100px"/>
-      <p *ngIf="(joueur.killed||etape=='end')&&joueur.alias">{{joueur.alias.nom}}</p>
-      <p *ngIf="joueur.killed||etape=='end'">{{joueur.role?.nom}}</p>
+  <p *ngIf="etape == 'vote' && tour == 0 && !voteEnded && president">
+    L'election vient juste de se terminer, mais vous devez déjà voter pour
+    éliminer un joueur de la partie
+  </p>
+  <p *ngIf="etape == 'vote' && !voteEnded">
+    Attention, un joueur aléatoire sera éxecuté si le village ne se décide pas
+    dans :
+  </p>
+  <p
+    *ngIf="(etape == 'vote' || etape == 'election') && !voteEnded"
+    style="font-size: 40px"
+  >
+    {{ timer }} secondes !
+  </p>
+  <div style="display: flex; justify-content: center">
+    <div
+      *ngFor="let joueur of joueurs; let i = index"
+      (click)="clickJoueurEnd(joueur)"
+      [ngClass]="{
+        clickableDiv:
+          (etape == 'kamikaze' || etape == 'newMaire') && !joueur.killed
+      }"
+      [ngClass]="{ linked: joueur.killed && joueur.linkedTo }"
+      [style.opacity]="joueur.killed ? '0.3' : '1'"
+      style="position: relative; margin-right: 5px"
+    >
+      <p>{{ joueur.nom }}</p>
+      <img
+        *ngIf="joueur.maire"
+        src="./assets/couronne.png"
+        style="
+          width: 100px;
+          height: 100px;
+          position: absolute;
+          top: -36px;
+          z-index: -1;
+        "
+      />
+      <img
+        *ngIf="!joueur.killed && etape != 'end'"
+        src="./assets/dos.jpg"
+        style="width: 100px; height: 100px"
+      />
+      <img
+        *ngIf="joueur.killed || etape == 'end'"
+        src="./assets/{{ joueur.role?.image }}.jpg"
+        style="width: 100px; height: 100px"
+      />
+      <p *ngIf="(joueur.killed || etape == 'end') && joueur.alias">
+        {{ joueur.alias.nom }}
+      </p>
+      <p *ngIf="joueur.killed || etape == 'end'">{{ joueur.role?.nom }}</p>
       <div>
-        <select [(ngModel)]="joueur.select" style="width:100px" *ngIf="!voteEnded&&!joueur.killed&&etape!='end'">
+        <select
+          [(ngModel)]="joueur.select"
+          style="width: 100px"
+          *ngIf="!voteEnded && !joueur.killed && etape != 'end'"
+        >
           <ng-container *ngFor="let j of joueurs">
-            <option *ngIf="(j!=joueur||etape=='election')&&!j.killed">{{j.nom}}</option>
+            <option *ngIf="(j != joueur || etape == 'election') && !j.killed">
+              {{ j.nom }}
+            </option>
           </ng-container>
         </select>
       </div>
     </div>
   </div>
-  <div style="display:flex;justify-content:center;">
-    <select *ngIf="(etape=='vote'||etape=='election')&&!voteEnded" [(ngModel)]="unanimite" style="max-width:100px;margin-top: 5px;border-color: red;margin-right: 5px;">
+  <div style="display: flex; justify-content: center">
+    <select
+      *ngIf="(etape == 'vote' || etape == 'election') && !voteEnded"
+      [(ngModel)]="unanimite"
+      style="
+        max-width: 100px;
+        margin-top: 5px;
+        border-color: red;
+        margin-right: 5px;
+      "
+    >
       <option></option>
       <ng-container *ngFor="let j of joueurs">
-        <option *ngIf="!j.killed">{{j.nom}}</option>
+        <option *ngIf="!j.killed">{{ j.nom }}</option>
       </ng-container>
     </select>
-    <button *ngIf="(etape=='vote'||etape=='election')&&!voteEnded" (click)="endVote()" [disabled]="countSelect()>0||voteEnded" [style.opacity]="countSelect()>0||voteEnded?'0.3':'1'" style="margin-top:5px;width:150px;">Voter</button>
-    <button *ngIf="(etape=='vote'&&voteEnded)||etape=='kamikaze'" (click)="endDay()" style="margin-top:5px;width:150px;">Terminer la journée</button>
-    <button *ngIf="etape=='end'" (click)="clickStart()">Rejouer</button>
+    <button
+      *ngIf="(etape == 'vote' || etape == 'election') && !voteEnded"
+      (click)="endVote()"
+      [disabled]="countSelect() > 0 || voteEnded"
+      [style.opacity]="countSelect() > 0 || voteEnded ? '0.3' : '1'"
+      style="margin-top: 5px; width: 150px"
+    >
+      Voter
+    </button>
+    <button
+      *ngIf="(etape == 'vote' && voteEnded) || etape == 'kamikaze'"
+      (click)="endDay()"
+      style="margin-top: 5px; width: 150px"
+    >
+      Terminer la journée
+    </button>
+    <button *ngIf="etape == 'end'" (click)="clickStart()">Rejouer</button>
   </div>
-  <div *ngIf="etape=='vote'">
+  <div *ngIf="etape == 'vote'">
     <p>Rôles restants :</p>
-    <div style="display:flex;justify-content:center">
-      <div *ngFor="let role of getRolesRestants()" style="margin-right:5px">
-        <p>{{role.role.nom}} : {{role.qte}}</p>
-        <img src="./assets/{{role.role.image}}.jpg" style="width:100px;height:100px"/>
+    <div style="display: flex; justify-content: center">
+      <div *ngFor="let role of getRolesRestants()" style="margin-right: 5px">
+        <p>{{ role.role.nom }} : {{ role.qte }}</p>
+        <img
+          src="./assets/{{ role.role.image }}.jpg"
+          style="width: 100px; height: 100px"
+        />
       </div>
     </div>
   </div>
