@@ -34,6 +34,7 @@ export class AppComponent {
   public goodwin: any;
   public clickMend?: Role;
   public nuit: any;
+  public killnuit:any=[];
   public tmpRoles: Role[] = [
     {
       showPlayers: true,
@@ -377,7 +378,11 @@ export class AppComponent {
       return;
     }
     if (this.joueurSelected.role!.nom == 'Tueur') {
-      if (this.persoClicked) this.kill(this.persoClicked);
+      if (this.persoClicked) 
+      {
+        this.kill(this.persoClicked);
+        this.killnuit.push(this.persoClicked);
+      }
       this.persoClicked = undefined;
     } else if (this.joueurSelected.role!.nom == 'Avocat') {
       if (this.persoClicked) {
@@ -388,11 +393,14 @@ export class AppComponent {
       }
     } else if (this.joueurSelected.role!.nom == 'Relou') {
       if (this.persoClicked) {
-        if (!this.persoClicked.vote) this.persoClicked.vote = 0;
-        if (!this.joueurSelected.vote) this.joueurSelected.vote = 0;
+        if (!this.persoClicked.vote) this.persoClicked.vote = 1;
+        if (!this.joueurSelected.vote) this.joueurSelected.vote = 1;
 
-        this.persoClicked.vote = this.persoClicked.vote - 1;
-        this.joueurSelected.vote = this.joueurSelected.vote + 1;
+        if(this.persoClicked.vote>0)
+        {
+          this.persoClicked.vote = this.persoClicked.vote - 1;
+          this.joueurSelected.vote = this.joueurSelected.vote + 1;
+        }
         this.persoClicked = undefined;
       }
     }
@@ -481,19 +489,25 @@ export class AppComponent {
     return false;
   }
 
-  showRed(joueurToRed: Joueur) {
-    let joueurActuel = this.joueurSelected;
+  showRed(joueurToRed: any) {
+    if( this.joueurSelected.role?.nom=='Trader'){
+      let guess = joueurToRed;
+      if(guess.nom)guess = guess.nom;
+      if(this.joueurSelected.role?.guess==guess)return true;
+    }
+      let joueurActuel = this.joueurSelected;
 
-    //Le docteur voit le blessé s'il peut encore le soigner
-    if (joueurToRed.killed && joueurActuel.role?.heal) return true;
-    //Le seducteur voit les deux liés
-    if (joueurActuel.role?.nom == 'Seducteur' && joueurToRed.linkedTo)
-      return true;
-    //Le seducteur voit la première personne liée
-    if (this.persoClicked == joueurToRed) return true;
-    //L'avocat voit son protégé
-    if (joueurActuel.role?.nom == 'Avocat' && joueurToRed.protected)
-      return true;
+      //Le docteur voit le blessé s'il peut encore le soigner
+      if (joueurToRed.killed && joueurActuel.role?.heal) return true;
+      //Le seducteur voit les deux liés
+      if (joueurActuel.role?.nom == 'Seducteur' && joueurToRed.linkedTo)
+        return true;
+      //Le seducteur voit la première personne liée
+      if (this.persoClicked == joueurToRed) return true;
+      //L'avocat voit son protégé
+      if (joueurActuel.role?.nom == 'Avocat' && joueurToRed.protected)
+        return true;
+    
 
     return false;
   }
@@ -521,6 +535,21 @@ export class AppComponent {
     }
     this.nuit.pause();
     let morts = this.joueurs.filter((j: Joueur) => j.killed && !j.out);
+
+    let traders = this.joueurs.filter((j:any)=>j.role?.nom=="Trader");
+    traders.forEach((j:any)=>{
+      let guess = j.role.guess;
+      if(guess!=undefined)
+      {
+        let trouve = true;
+        if(morts.length==0&&guess!="0dead")trouve = false;
+        else if(morts.length>1&&guess!="2dead")trouve = false;
+        else if(guess!=morts[0].nom)trouve = false;
+        if(trouve)j.vote += 2;
+        else j.vote -= 1;
+      }
+    });
+
     if (morts.length > 0) {
       this.death.play();
     } else {
@@ -553,6 +582,7 @@ export class AppComponent {
         this.timer = 40;
         jo.role!.used = false;
       }
+      console.log(this.joueurs);
       this.etape = 'vote';
     }
   }
@@ -590,16 +620,12 @@ export class AppComponent {
 
   endDay() {
     this.kamikaze = undefined;
-    let killcupidon = undefined;
     for (let i = 0; i < this.joueurs.length; i++) {
       if (this.joueurs[i].killed && !this.joueurs[i].out) {
         let joueur = this.joueurs[i];
         joueur.out = true;
         if (joueur.role?.nom == 'Kamikaze') this.kamikaze = joueur;
       }
-    }
-    if (killcupidon) {
-      this.kill(killcupidon);
     }
     if (!this.kamikaze) {
       let maireDead = this.joueurs.find(
@@ -698,7 +724,7 @@ export class AppComponent {
       if (j.linkedTo) {
         let jo = j.linkedTo;
         if (jo) {
-          this.kill(jo);
+          jo.killed = true;
         }
       }
       this.voteEnded = true;
@@ -776,6 +802,7 @@ export class AppComponent {
       else if (a.nb && b.nb && a.nb < b.nb) return -1;
       else return 1;
     });
+    this.killnuit = [];
     this.idx = 0;
     this.persoClicked = undefined;
     this.joueurs.forEach((j: any) => (j.vote = 1));
@@ -791,6 +818,7 @@ export class AppComponent {
       this.startNuit();
     } else {
       this.joueurSelected = this.joueurs[this.idx];
+      if(this.joueurSelected.role?.nom=="Trader")this.joueurSelected.role.guess=undefined;
       this.idx = this.idx + 1;
     }
   }
@@ -800,10 +828,21 @@ export class AppComponent {
     else if (this.etape == 'newMaire') this.newMaire(joueur);
   }
 
-  clickPlayer(joueur: Joueur) {
+  clickPlayer(joueur: any) {
     if (this.over) return;
 
-    if (this.joueurSelected.role?.nom == 'Seducteur') {
+    if (this.joueurSelected.role?.nom == 'Trader')
+    {
+      let guess = joueur;
+      if(guess.nom)guess = guess.nom;
+
+      if (this.joueurSelected.role.guess==guess) {
+        this.joueurSelected.role.guess = undefined;
+      }
+      else
+        this.joueurSelected.role.guess = guess;
+    }
+    else if (this.joueurSelected.role?.nom == 'Seducteur') {
       if (this.persoClicked) {
         this.persoClicked.linkedTo = joueur;
         joueur.linkedTo = this.persoClicked;
@@ -826,6 +865,7 @@ export class AppComponent {
         this.persoClicked = undefined;
       } else if (this.joueurSelected.role.kill) {
         this.kill(joueur);
+        this.killnuit.push(joueur);
         this.joueurSelected.role.kill = false;
         this.over = true;
         this.persoClicked = joueur;

@@ -179,6 +179,7 @@
 <div *ngIf="etape == 'nuit'" style="display: flex; justify-content: center">
   <div style="display: flex">
     <div *ngIf="showPlayers()" style="margin-right: 10px">
+      
       <div
         *ngFor="let joueur of joueurs; let i = index"
         style="margin-bottom: 5px"
@@ -209,6 +210,26 @@
             {{ joueur.role?.nom }}
           </p>
         </div>
+      </div>
+      <div style="margin-bottom: 35px" *ngIf="joueurSelected.role?.nom=='Trader'">
+        <p
+            class="clickable"
+            (click)="clickPlayer('0dead')"
+            style="width: 150px"
+            [style.color]="showRed('0dead') ? 'red' : 'white'"
+          >
+            {{joueurs.length}}. Aucun mort
+          </p>
+      </div>
+      <div style="margin-bottom: 5px" *ngIf="joueurSelected.role?.nom=='Trader'">
+        <p
+            class="clickable"
+            (click)="clickPlayer('2dead')"
+            style="width: 150px"
+            [style.color]="showRed('2dead') ? 'red' : 'white'"
+          >
+          {{joueurs.length+1}}. Plus d'1 mort
+          </p>
       </div>
     </div>
 

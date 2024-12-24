@@ -31,4 +31,5 @@ export class Role {
     public life?: number;
     public reste?: Role[];
     public vote?: number;
+    public guess?:string;
 }
